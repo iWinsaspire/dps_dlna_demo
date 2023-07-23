@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">dpsDlnaDemo</string>
+
+    <string name="btn_start_dps_service">1,启动服务</string>
+
+    <string name="btn_get_device_list">获取设备列表(获取当前在线设备,手动刷新)</string>
+
+    <string name="btn_register_device_listen">2.1 注册监听器(实时获取设备状态)</string>
+
+
+    <string name="btn_conn_device">3 选择列表中的第一个设备,并投放视频</string>
+
+</resources>
