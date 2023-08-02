@@ -3,7 +3,6 @@
 buildscript {
     repositories {
 
-
         maven {
             allowInsecureProtocol true  //比较高的 gradle 要允许 http
             url 'http://nexus.dolphinstar.cn/repo/openmavenx'
@@ -11,10 +10,6 @@ buildscript {
         maven { url 'https://maven.aliyun.com/repository/central'}
         maven { url 'https://maven.aliyun.com/repository/public'}
         maven { url 'https://maven.aliyun.com/repository/google' }
-        maven {
-            allowInsecureProtocol true  //比较高的 gradle 要允许 http
-            url 'http://developer.huawei.com/repo'
-        }
 
     }
     dependencies {
@@ -35,10 +30,6 @@ allprojects {
         maven { url 'https://maven.aliyun.com/repository/central'}
         maven { url 'https://maven.aliyun.com/repository/public'}
         maven { url 'https://maven.aliyun.com/repository/google' }
-        maven {
-            allowInsecureProtocol true  //比较高的 gradle 要允许 http
-            url 'http://developer.huawei.com/repo'
-        }
 
     }
 }

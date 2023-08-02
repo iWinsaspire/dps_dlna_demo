@@ -1,15 +1,39 @@
-apply plugin: 'com.android.application' 
+apply plugin: 'com.android.application'
+
 
 android {
+
+    //begin demo为了避免私有配置意外提交git,将海豚星空投屏SDK配置存储在dps.properties,然后编译到BuildConfig到中读取，非必须
+    def dpsAppId = ""
+    def dpsAppSecret =""
+
+    def dpPath = "../dps.properties";
+    def file = new File(dpPath)
+    if (file.exists()) {
+        def dpsPropertiesFile = rootProject.file(dpPath)
+        def dpsProperties = new Properties()
+        dpsProperties.load(new FileInputStream(dpsPropertiesFile))
+        dpsAppId = dpsProperties['dpsDlnaAppId']
+        dpsAppSecret = dpsProperties['dpsDlnaSecret']
+    }
+    //end demo为了避免私有配置意外提交git,将海豚星空投屏SDK配置存储在dps.properties,然后编译到BuildConfig到中读取，非必须
+
+    //注意注意 版本不要大于28 ！！！
     compileSdkVersion 28
     defaultConfig {
         applicationId "cn.dolphinstar.ctrl.demo"
         minSdkVersion 23
-        //minSdkVersion 24
+        //注意注意 版本不要大于28 ！！！
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
+
+        //begin 海豚星空投屏SDK配置编译到BuildConfig到中读取，非必须
+        buildConfigField("String","dpsAppId","\"$dpsAppId\"")
+        buildConfigField("String","dpsAppSecret","\"$dpsAppSecret\"")
+        //end 海豚星空投屏SDK配置编译到BuildConfig到中读取，非必须
+
     }
     useLibrary 'org.apache.http.legacy'
     buildTypes {
@@ -31,17 +55,10 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
-
-    //海豚星空投屏核心库
+    //海豚星空投屏核心库 建议使用后台显示的最新本
     implementation 'cn.dolphinstar:ctrlCore:5.0.1'
-    //海豚豚镜像投屏（可选）
-    implementation 'cn.dolphinstar:ctrlMirror:5.0.1'
-    //https://developer.huawei.com/consumer/cn/codelab/ScanKit-DefaultView/index.html#0
-    //华为扫码工具库
-    implementation 'com.huawei.hms:scan:2.4.0.302'
     //其他
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
-    implementation 'com.google.android.material:material:1.4.0'
 
 }

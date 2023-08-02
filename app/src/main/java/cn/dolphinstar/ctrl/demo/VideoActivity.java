@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import cn.dolphinstar.ctrl.demo.utility.DemoActivityBase;
 import cn.dolphinstar.ctrl.demo.utility.DemoConst;
+import cn.dolphinstar.ctrl.demo.utility.DeviceListAdapter;
 import cn.dolphinstar.lib.IDps.IDpsCtrlPlayer;
 import cn.dolphinstar.lib.IDps.IDpsOpenDmcBrowser;
 import cn.dolphinstar.lib.IDps.IDpsOpenPushReady;
@@ -53,12 +54,14 @@ public class VideoActivity extends DemoActivityBase {
         public void DlnaDeviceStatusNotify(DlnaDevice device) {
             if (RenderDevice.isRenderDevice(device)) {
                 switch (device.stateNow) {
+                    // 有新的接收端设备上线 触发
                     case DemoConst.DEVICE_STATE_ONLINE:
-                        // 有新的接收端设备上线
                         searchDevices();
                         break;
+
+                    // 有接收端设备离线 触发
                     case DemoConst.DEVICE_STATE_OFFLINE:
-                        // 有接收端设备离线
+
                         searchDevices();
                         break;
                     default:
@@ -124,6 +127,8 @@ public class VideoActivity extends DemoActivityBase {
         btnCastV.setOnClickListener(v -> {
             //点击投屏按钮显示设备列表
             llDeviceLayout.setVisibility(View.VISIBLE);
+            //可以主动发起搜索接收端设备
+            searchDevices();
         });
 
         //设备列表
@@ -179,15 +184,17 @@ public class VideoActivity extends DemoActivityBase {
         ArrayList<RenderDevice> list = MYOUController.of(VideoActivity.this)
                 .getRenderDevice().GetAllOnlineDevices();
         if (list.size() > 0) {
+            // Observable主要切主线程 操作UI
             Observable.fromArray(list)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(item -> {
                         renderDeviceList.clear();
                         renderDeviceList.addAll(item);
                         lvAdapter.notifyDataSetChanged();
+                        toast("获取设备数量: " + list.size());
                     });
         } else {
-            //没啥用 主要切主线程 操作UI
+            // Observable主要切主线程 操作UI
             Observable.timer(1, TimeUnit.MILLISECONDS)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(i -> {

@@ -13,4 +13,5 @@ public class DemoActivityBase extends AppCompatActivity {
         Toast.makeText(getApplication(), msg, Toast.LENGTH_SHORT).show();
         Log.i("Toast", msg);
     }
+
 }

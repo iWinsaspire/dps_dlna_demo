@@ -1,4 +1,4 @@
-package cn.dolphinstar.ctrl.demo;
+package cn.dolphinstar.ctrl.demo.utility;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,6 +10,8 @@ import android.widget.TextView;
 import com.mydlna.dlna.core.RenderDevice;
 
 import java.util.List;
+
+import cn.dolphinstar.ctrl.demo.R;
 
 public class DeviceListAdapter extends ArrayAdapter {
     private final int resourceId ;
