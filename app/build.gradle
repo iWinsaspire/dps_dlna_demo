@@ -18,12 +18,12 @@ android {
     }
     //end demo为了避免私有配置意外提交git,将海豚星空投屏SDK配置存储在dps.properties,然后编译到BuildConfig到中读取，非必须
 
-    //注意注意 版本不要大于28 ！！！
+    //另外注意编译不通过建议编译SDK版本不要大于28
     compileSdkVersion 28
     defaultConfig {
         applicationId "cn.dolphinstar.ctrl.demo"
         minSdkVersion 23
-        //注意注意 版本不要大于28 ！！！
+        //另外注意编译不通过建议目标SDK版本不要大于28
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
         versionCode 1

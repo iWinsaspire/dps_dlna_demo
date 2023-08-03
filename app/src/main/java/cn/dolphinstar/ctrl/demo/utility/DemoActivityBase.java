@@ -5,7 +5,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import cn.dolphinstar.ctrl.demo.MainActivity;
 
 public class DemoActivityBase extends AppCompatActivity {
 

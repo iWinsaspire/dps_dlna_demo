@@ -94,6 +94,8 @@ public class VideoActivity extends DemoActivityBase {
                             switch (s.state) {
                                 case 0:
                                     stateText = "停止";
+                                    deviceDisposable.dispose();
+                                    deviceDisposable = null;
                                     break;
                                 case 1:
                                     stateText = "播放中...";
