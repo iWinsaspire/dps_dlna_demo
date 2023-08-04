@@ -2,6 +2,14 @@
 
 海豚星空投屏 DLNA 投屏示例
 
+#### (0) 注意 gradle\wrapper\gradle-wrapper.properties
+demo采用本地目录使用 gradle-7.4-all.zip, 根据自己的的情况修改
+```bash 
+#distributionUrl=https\://services.gradle.org/distributions/gradle-7.4-all.zip
+手动改用上面的
+distributionUrl=file:///D:/Android/gradle-7.4-all.zip
+```
+
 ##（1）跟目录的build.gradle添加私有mevan仓库
 ```groovy
 maven {
@@ -68,53 +76,42 @@ app\src\main\res\xml 中添加文件 network_security_config.xml
 
 ### 启动服务
 ```java
-public class MainActivity extends DemoActivityBase {
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        
-        //启动海豚星空SDK投屏服务
-        dpsSdkStartUp();
+
+//启动海豚星空SDK投屏服务 确保设备连接外网情况下启动
+@SuppressLint("CheckResult")
+private void dpsSdkStartUp() {
+    cfg = new StartUpCfg();
+    cfg.MediaServerName = "海豚星空DMS-" + (int) (Math.random() * 900 + 100);
+    cfg.IsShowLogger = BuildConfig.DEBUG;
+    cfg.AppSecret = "xxxxxxx"; //这里填入你的秘钥
+
+    //demo 特殊配置信息 ，非必要。按自己想要的方式给 AppId AppSecret赋值就好
+    if (!BuildConfig.dpsAppId.isEmpty()) {
+        //虽然这里可以配置AppId，但app/src/main/assets/dpsAppInfo文件还是必须存在，可以不配置真的值。
+        cfg.AppId = BuildConfig.dpsAppId;
     }
+    if (!BuildConfig.dpsAppSecret.isEmpty()) {
+    cfg.AppSecret = BuildConfig.dpsAppSecret;
+    } 
     
-    //启动海豚星空SDK投屏服务
-    @SuppressLint("CheckResult")
-    private void dpsSdkStartUp() {
-        cfg = new StartUpCfg();
-        cfg.MediaServerName = "海豚星空DMS-" + (int) (Math.random() * 900 + 100);
-        cfg.IsShowLogger = BuildConfig.DEBUG;
-        cfg.AppSecret = "xxxxxxx"; //这里填入你的秘钥
-
-
-        //demo 特殊配置信息 ，非必要。按自己想要的方式给 AppId AppSecret赋值就好
-        if (!BuildConfig.dpsAppId.isEmpty()) {
-            //虽然这里可以配置AppId，但app/src/main/assets/dpsAppInfo文件还是必须存在，可以不配置真的值。
-            cfg.AppId = BuildConfig.dpsAppId;
-        }
-        if (!BuildConfig.dpsAppSecret.isEmpty()) {
-            cfg.AppSecret = BuildConfig.dpsAppSecret;
-        }
-
-
-        MYOUController.of(MainActivity.this)
-                .StartService(cfg)    // 启动服务
-                .observeOn(AndroidSchedulers.mainThread()) //操作UI要切主线程
-                .subscribe(
-                        y -> {
-                            toast("Dps SDK启动成功"); 
-                        },
-                        e -> toast(e.getLocalizedMessage()));
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        //APP关闭要关闭服务
-        MYOUController.of(MainActivity.this).Close();
-        super.onDestroy();
-    }
+    MYOUController.of(MainActivity.this)
+        .StartService(cfg)    // 启动服务
+        .observeOn(AndroidSchedulers.mainThread()) //操作UI要切主线程
+        .subscribe(
+                y -> {
+                    toast("Dps SDK启动成功");
+                    },
+            e -> toast(e.getLocalizedMessage()));
 }
+
+
+//注意APP关闭时 要关闭服务
+protected void onDestroy() {
+    //APP关闭要关闭服务
+    MYOUController.of(MainActivity.this).Close();
+    super.onDestroy();
+}
+
 ```
 
 ### 投屏接口
@@ -152,7 +149,6 @@ public class VideoActivity extends DemoActivityBase {
         }
 
     };
-
 
     //记得释放
     private Disposable deviceDisposable = null;
