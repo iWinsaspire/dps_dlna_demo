@@ -17,15 +17,12 @@ android {
         dpsAppSecret = dpsProperties['dpsDlnaSecret']
     }
     //end demo为了避免私有配置意外提交git,将海豚星空投屏SDK配置存储在dps.properties,然后编译到BuildConfig到中读取，非必须
-
-    //另外注意编译不通过建议编译SDK版本不要大于28
-    compileSdkVersion 28
+    compileSdk 30
     defaultConfig {
         applicationId "cn.dolphinstar.ctrl.demo"
         minSdkVersion 23
-        //另外注意编译不通过建议目标SDK版本不要大于28
         //noinspection ExpiredTargetSdkVersion
-        targetSdkVersion 28
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
@@ -56,7 +53,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     //海豚星空投屏核心库 建议使用后台显示的最新本
-    implementation 'cn.dolphinstar:ctrlCore:5.0.1'
+    implementation 'cn.dolphinstar:ctrlCore:5.1.1'
     //其他
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.0'

@@ -41,7 +41,7 @@ public class MainActivity extends DemoActivityBase {
 
         NetHelper netHelper = new NetHelper(getApplicationContext());
         int netType = netHelper.getConnectedType();
-        if (netType == -1) {
+       if (netType == -1) {
             toast("未连接网络，投屏服务未启动!");
         } else {
         cfg = new StartUpCfg();

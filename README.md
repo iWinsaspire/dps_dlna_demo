@@ -10,7 +10,7 @@ demo采用本地目录使用 gradle-7.4-all.zip, 根据自己的的情况修改
 distributionUrl=file:///D:/Android/gradle-7.4-all.zip
 ```
 
-##（1）跟目录的build.gradle添加私有mevan仓库
+## （1）跟目录的build.gradle添加私有mevan仓库
 ```groovy
 maven {
     allowInsecureProtocol true  //比较高的 gradle 要允许 http  ，低版本可不要
@@ -37,13 +37,16 @@ compileOptions {
 }
 ```
 ```groovy
-//另外注意编译不通过建议编译SDK版本不要大于28
+//另外注意sdk 版本小于 5.1.1编译SDK版本不要大于28
 compileSdkVersion 28
 defaultConfig { 
-    //另外注意编译不通过建议目标SDK版本不要大于28
+    //另外注意sdk 版本小于 5.1.1目标SDK版本不要大于28
     targetSdkVersion 28
 }
+
+//sdk 版本从 5.1.1 开始，可以大于30，建议升级最新版本SDK
 ```
+
 ## (3) APP权限
 ```xml
 <!-- 网络访问全系 必须权限-->
@@ -66,7 +69,7 @@ app\src\main\res\xml 中添加文件 network_security_config.xml
 
 ## (5) 申请海豚星空投屏SDK APPID
 
-前往 海豚星空平台 控制中心 注册并创建应用获取appId   
+前往 海豚星空平台 [控制中心](https://client.dolphinstar.cn) 注册并创建应用获取appId   
 在app/src/main/assets  
 添加文件dpsAppInfo  
 添加建值对 APPID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  
@@ -243,3 +246,13 @@ public class VideoActivity extends DemoActivityBase {
      * */
 }
 ```
+
+## 设备在海豚星空平台唯一标识
+sdk 版本小于 5.1.1 使用MAC地址作为标识，MAC作为唯一标识已过时。5.1.1开始使用android id作为标识，需要在配置文件在app/src/main/assets/dpsAppInfo添加键值对指定为AndroidID
+```bash
+#注意 AUTHMACTYPE是要与appId对应的配置一致，有问题导致无法启动sdk及时与海豚星空投屏技术人员沟通
+AUTHMACTYPE=AndroidID
+```
+
+---
+## [开发者文档](https://dolphinstar.cn/doc/#android/dlna)

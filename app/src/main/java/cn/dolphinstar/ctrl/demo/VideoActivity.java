@@ -89,7 +89,9 @@ public class VideoActivity extends DemoActivityBase {
             if (renderStatus.state == 1 && deviceDisposable == null) {
                 //主动查询进度条
                 deviceDisposable = MYOUController.of(VideoActivity.this)
-                        .getDpsPlayer().Query().subscribe(s -> {
+                        .getDpsPlayer().Query()
+                        .observeOn(AndroidSchedulers.mainThread()) //切主线程
+                        .subscribe(s -> {
                             String stateText = "";
                             switch (s.state) {
                                 case 0:
