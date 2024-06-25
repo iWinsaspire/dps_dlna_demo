@@ -48,6 +48,7 @@ public class MainActivity extends DemoActivityBase {
         cfg.IsShowLogger = BuildConfig.DEBUG;
         cfg.MediaServerName = "海豚星空DMS-" + (int) (Math.random() * 900 + 100);
         cfg.AppSecret = "xxxxxxx"; //这里填入你的秘钥
+
         //demo 特殊配置信息 ，非必要。按自己想要的方式给 AppId AppSecret赋值就好
         if(!BuildConfig.dpsAppId.isEmpty()){
             //虽然这里可以配置AppId，
@@ -57,7 +58,6 @@ public class MainActivity extends DemoActivityBase {
         if(!BuildConfig.dpsAppSecret.isEmpty()){
             cfg.AppSecret = BuildConfig.dpsAppSecret;
         }
-
 
         MYOUController.of(MainActivity.this)
                 .StartService(cfg)    // 启动服务
