@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.util.concurrent.TimeUnit;
+
 import cn.dolphinstar.ctrl.demo.utility.DemoActivityBase;
 import cn.dolphinstar.lib.POCO.StartUpCfg;
 import cn.dolphinstar.lib.ctrlCore.MYOUController;
@@ -17,7 +19,6 @@ public class MainActivity extends DemoActivityBase {
 
     private StartUpCfg cfg;
     private Button btnLink;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -3,6 +3,7 @@ package cn.dolphinstar.ctrl.demo;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -22,7 +23,9 @@ import cn.dolphinstar.lib.IDps.IDpsCtrlPlayer;
 import cn.dolphinstar.lib.IDps.IDpsOpenDmcBrowser;
 import cn.dolphinstar.lib.IDps.IDpsOpenPushReady;
 import cn.dolphinstar.lib.POCO.ReturnMsg;
+import cn.dolphinstar.lib.POCO.StartUpCfg;
 import cn.dolphinstar.lib.ctrlCore.MYOUController;
+import cn.dolphinstar.lib.wozkit.NetHelper;
 import cn.dolphinstar.lib.wozkit.WozLogger;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -53,6 +56,7 @@ public class VideoActivity extends DemoActivityBase {
         @Override
         public void DlnaDeviceStatusNotify(DlnaDevice device) {
             if (RenderDevice.isRenderDevice(device)) {
+                WozLogger.e("DlnaDeviceStatusNotify 事件触发");
                 switch (device.stateNow) {
                     // 有新的接收端设备上线 触发
                     case DemoConst.DEVICE_STATE_ONLINE:
@@ -108,11 +112,10 @@ public class VideoActivity extends DemoActivityBase {
                                 default:
                                     break;
                             }
-                            WozLogger.w("当前电视状态:" + stateText + "( " + s.state + " )"
+                            Log.e("video","当前电视状态:" + stateText + "( " + s.state + " )"
                                     .concat("  总时长(秒)：" + s.duration)
                                     .concat("  当前进度(秒):" + s.progress)
-                                    .concat("  当前音量:" + s.volume)
-                            );
+                                    .concat("  当前音量:" + s.volume)  );
                         });
 
             }
@@ -125,6 +128,7 @@ public class VideoActivity extends DemoActivityBase {
         setContentView(R.layout.activity_video);
 
         llDeviceLayout = findViewById(R.id.ll_device_list);
+
 
         //投屏按钮
         btnCastV = findViewById(R.id.btn_cast_v);
@@ -217,6 +221,8 @@ public class VideoActivity extends DemoActivityBase {
         //投放视频
         ReturnMsg msg = dpsCtrlPlayer
                 .PushVideo("https://dolphinstar.cn/fs/video/auth/auth_succes.mp4", "标题", device);
+
+        //.PushVideo("http://192.168.3.133:8888/long.mp4","11",device);
         //投放音频
         //dpsCtrlPlayer.PushAudio("","",device);
         //投放图片
