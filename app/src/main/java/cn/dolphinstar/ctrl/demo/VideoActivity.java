@@ -222,7 +222,7 @@ public class VideoActivity extends DemoActivityBase {
         ReturnMsg msg = dpsCtrlPlayer
                 .PushVideo("https://dolphinstar.cn/fs/video/auth/auth_succes.mp4", "标题", device);
 
-        //.PushVideo("http://192.168.3.133:8888/long.mp4","11",device);
+
         //投放音频
         //dpsCtrlPlayer.PushAudio("","",device);
         //投放图片
