@@ -1,30 +1,34 @@
-apply plugin: 'com.android.application'
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.jetbrains.kotlin.android)
+}
+
+//begin demo为了避免私有配置意外提交git,将海豚星空投屏SDK配置存储在dps.properties,然后编译到BuildConfig到中读取，非必须
+def dpsAppId = ""
+def dpsAppSecret =""
+
+def dpPath = "../dps.properties";
+def file = new File(dpPath)
+
+if (file.exists()) {
+    def dpsPropertiesFile = rootProject.file(dpPath)
+    def dpsProperties = new Properties()
+    dpsProperties.load(new FileInputStream(dpsPropertiesFile))
+    dpsAppId = dpsProperties['dpsDlnaAppId']
+    dpsAppSecret = dpsProperties['dpsDlnaSecret']
+}
+//end demo为了避免私有配置意外提交git,将海豚星空投屏SDK配置存储在dps.properties,然后编译到BuildConfig到中读取，非必须
+
 
 
 android {
+    namespace 'cn.dolphinstar.player.demo'
+    compileSdk 34
 
-    //begin demo为了避免私有配置意外提交git,将海豚星空投屏SDK配置存储在dps.properties,然后编译到BuildConfig到中读取，非必须
-    def dpsAppId = ""
-    def dpsAppSecret =""
-
-    def dpPath = "../dps.properties";
-    def file = new File(dpPath)
-
-    if (file.exists()) {
-        def dpsPropertiesFile = rootProject.file(dpPath)
-        def dpsProperties = new Properties()
-        dpsProperties.load(new FileInputStream(dpsPropertiesFile))
-        dpsAppId = dpsProperties['dpsDlnaAppId']
-        dpsAppSecret = dpsProperties['dpsDlnaSecret']
-    }
-    //end demo为了避免私有配置意外提交git,将海豚星空投屏SDK配置存储在dps.properties,然后编译到BuildConfig到中读取，非必须
-
-    compileSdk 30
     defaultConfig {
         applicationId "cn.dolphinstar.ctrl.demo"
-        minSdkVersion 23
-        //noinspection ExpiredTargetSdkVersion
-        targetSdkVersion 30
+        minSdk 24
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -33,37 +37,66 @@ android {
         buildConfigField("String","dpsAppSecret","\"$dpsAppSecret\"")
         //end 海豚星空投屏SDK配置编译到BuildConfig到中读取，非必须
 
-    }
-    useLibrary 'org.apache.http.legacy'
-    buildTypes {
-        debug{
-            // 混淆
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        release {
-            // 混淆
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
         }
     }
 
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        compose true
+        viewBinding true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.5.1'
+    }
+    packaging {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    // https://mvnrepository.com/artifact/androidx.appcompat/appcompat
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.lifecycle.runtime.ktx
+    implementation libs.androidx.activity.compose
+    implementation platform(libs.androidx.compose.bom)
+    implementation libs.androidx.ui
+    implementation libs.androidx.ui.graphics
+    implementation libs.androidx.ui.tooling.preview
+    implementation libs.androidx.material3
+    implementation libs.androidx.appcompat
+    implementation libs.material
+    implementation libs.androidx.activity
+    implementation libs.androidx.constraintlayout
+    implementation libs.androidx.navigation.fragment
+    implementation libs.androidx.navigation.ui
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.espresso.core
+    androidTestImplementation platform(libs.androidx.compose.bom)
+    androidTestImplementation libs.androidx.ui.test.junit4
+    debugImplementation libs.androidx.ui.tooling
+    debugImplementation libs.androidx.ui.test.manifest
 
     //海豚星空投屏核心库 建议使用后台显示的最新本
-    implementation 'cn.dolphinstar:ctrlCore:5.1.6'
+    implementation 'cn.dolphinstar:ctrlCore:5.1.9'
     //其他
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
-
 }

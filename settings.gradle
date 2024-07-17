@@ -1,2 +1,40 @@
+pluginManagement {
+    repositories {
+        maven {
+            allowInsecureProtocol true  //比较高的 gradle 要允许 http
+            url 'http://nexus.dolphinstar.cn/repo/openmavenx'
+        }
+        maven { url 'https://maven.aliyun.com/repository/central'}
+        maven { url 'https://maven.aliyun.com/repository/public'}
+        maven { url 'https://maven.aliyun.com/repository/google' }
+
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+         
+        maven {
+            allowInsecureProtocol true  //比较高的 gradle 要允许 http
+            url 'http://nexus.dolphinstar.cn/repo/openmavenx'
+        }
+        maven { url 'https://maven.aliyun.com/repository/central'}
+        maven { url 'https://maven.aliyun.com/repository/public'}
+        maven { url 'https://maven.aliyun.com/repository/google' }
+
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "dps_dlna_test"
 include ':app'
-rootProject.name='DpsDlnaDemo'
