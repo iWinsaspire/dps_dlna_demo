@@ -226,19 +226,18 @@ public class PlayerActivity extends AppCompatActivity {
             cfg = new StartUpCfg();
             cfg.IsShowLogger = BuildConfig.DEBUG;
             cfg.MediaServerName = "海豚星空DMS-" + (int) (Math.random() * 900 + 100);
-            cfg.AppSecret = "7933f0db39854c15"; //这里填入你的秘钥
-            cfg.AppId = "1a92e82b8af745e7a9c0212f517af4f7";
+            cfg.AppSecret = ""; //这里填入你的秘钥
+            cfg.AppId = ""; //这里填入你的秘钥
             cfg.IsEnableLocaldms = false;
 
             //demo 特殊配置信息 ，非必要。按自己想要的方式给 AppId AppSecret赋值就好
-            if (!BuildConfig.dpsAppId.isEmpty()) {
+            if (!BuildConfig.dpsAppId.isEmpty() && !BuildConfig.dpsAppSecret.isEmpty() ) {
                 //虽然这里可以配置AppId，
                 //但app/src/main/assets/dpsAppInfo文件还是必须存在，可以不配置真的值。
                 cfg.AppId = BuildConfig.dpsAppId;
-            }
-            if (!BuildConfig.dpsAppSecret.isEmpty()) {
+
                 cfg.AppSecret = BuildConfig.dpsAppSecret;
-            }
+            } 
 
             if (!MYOUController.of(getApplication()).IsStartUp()) {
 
