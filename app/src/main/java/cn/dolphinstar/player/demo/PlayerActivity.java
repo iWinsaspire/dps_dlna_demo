@@ -79,8 +79,22 @@ public class PlayerActivity extends AppCompatActivity {
                     keepPush2DeviceDisposableSafe();
                 });
         GlobalData.currentRenderDevice = device;
+
+        startTime = System.currentTimeMillis();
+        endTime = 0;
+        /*
+        主动查询状态
+        如果要求UI响应更新，
+        尽快获取播放状态，
+        可以立即主动查询状态
+         */
+        queryState();
     }
 
+    // 记录开始时间
+    long startTime = 0;
+    // 记录结束时间
+    long endTime =0;
 
     public static String formatSeconds(int seconds) {
         int hours = seconds / 3600;
@@ -90,58 +104,74 @@ public class PlayerActivity extends AppCompatActivity {
         return String.format("%02d:%02d:%02d", hours, minutes, secs);
     }
 
-    //监听播放状态
-    IDpsOpenPushReady dpsOpenPushReady = renderStatus -> {
-        // 状态为播放的时候 开始主动查询进度条
-        if (renderStatus.state == 1) {
-            /*
-            * 没有定时器去查询进度就创建一个，有了就忽略
-            * 监听器是dup协议，不可靠
-            * 创建一个定时器，每1秒去查询1次进度 TCP可靠
-            *  */
-            if( GlobalData.deviceDisposable == null) {
-
-                //主动查询进度条
-                GlobalData.deviceDisposable = MYOUController.of(getApplication())
-                        .getDpsPlayer().Query()
-                        .observeOn(AndroidSchedulers.mainThread()) //切主线程
-                        .subscribe(s -> {
-                            String stateText = "";
-                            switch (s.state) {
-                                case 0:
-                                    stateText = "停止中";
-                                    break;
-                                case 1:
-                                    stateText = "播放中...";
-                                    break;
-                                case 2:
-                                    stateText = "暂停";
-                                    break;
-                                case -1:
-                                    stateText = "没有播放";
-                                    break;
-                                default:
-                                    break;
-                            }
-                            Log.e("video", "当前电视状态:" + stateText + "( " + s.state + " )"
-                                    .concat("  总时长(秒)：" + s.duration)
-                                    .concat("  当前进度(秒):" + s.progress)
-                                    .concat("  当前音量:" + s.volume));
-
-                            RxEventBus.of().emit(new pUpdateUIState(
-                                    stateText
-                                            .concat("\n")
-                                            .concat(formatSeconds(s.progress))
-                                            .concat("  -  ")
-                                            .concat(formatSeconds(s.duration)
-                            )));
-
-                        });
-
-            }
-        }else {
-            WozLogger.json(renderStatus);
+    public  String transformationState(int state){
+        String stateText = "";
+        switch (state) {
+            case 0:
+                stateText = "停止中";
+                break;
+            case 1:
+                stateText = "播放中...";
+                break;
+            case 2:
+                stateText = "暂停";
+                break;
+            case -1:
+                stateText = "没有播放";
+                break;
+            default:
+                break;
         }
+        return  stateText;
+    }
+
+    /*
+    * 主动轮询电视状态
+    * */
+    public  void queryState (){
+        /*
+         * 没有定时器去查询进度就创建一个，有了就忽略
+         * 监听器是dup协议，不可靠
+         * 创建一个定时器，每1秒去查询1次进度 TCP可靠 保证进度条有序 稳定
+         *  */
+        if( GlobalData.deviceDisposable == null) {
+
+            //主动查询进度条
+            GlobalData.deviceDisposable = MYOUController.of(getApplication())
+                    .getDpsPlayer().Query()
+                    .observeOn(AndroidSchedulers.mainThread()) //切主线程
+                    .subscribe(s -> {
+                        if(s.state == 1 && endTime == 0){
+                            endTime = System.currentTimeMillis();
+                            // 计算执行时间
+                            long executionTime = endTime - startTime;
+                            WozLogger.e("投放链接到准备就绪: " + executionTime + " 毫秒");
+                        }
+                        String stateText = "";
+                        transformationState(s.state);
+                        Log.e("video", "当前电视状态:" + stateText + "( " + s.state + " )"
+                                .concat("  总时长(秒)：" + s.duration)
+                                .concat("  当前进度(秒):" + s.progress)
+                                .concat("  当前音量:" + s.volume));
+
+                        RxEventBus.of().emit(new pUpdateUIState(
+                                stateText
+                                        .concat("\n")
+                                        .concat(formatSeconds(s.progress))
+                                        .concat("  -  ")
+                                        .concat(formatSeconds(s.duration)
+                                        )));
+
+                    });
+
+        }
+    }
+    /*
+    * 监听播放状态
+    * udp 时效性差
+    * */
+    IDpsOpenPushReady dpsOpenPushReady = renderStatus -> {
+        // WozLogger.json(renderStatus);
     };
 
 
@@ -192,8 +222,8 @@ public class PlayerActivity extends AppCompatActivity {
             dpsSdkStartUp();
         });
 
-        MYOUController.of(getApplication())
-                .SetPushReady(dpsOpenPushReady);//注册状态查询覆盖作用
+        //注册状态查询覆盖作用
+        //MYOUController.of(getApplication()) .SetPushReady(dpsOpenPushReady);
     }
 
     private boolean checkDevice() {

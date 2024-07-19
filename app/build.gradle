@@ -37,7 +37,7 @@ android {
         buildConfigField("String","dpsAppSecret","\"$dpsAppSecret\"")
         //end 海豚星空投屏SDK配置编译到BuildConfig到中读取，非必须
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        //testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
         }
@@ -86,6 +86,7 @@ dependencies {
     implementation libs.androidx.constraintlayout
     implementation libs.androidx.navigation.fragment
     implementation libs.androidx.navigation.ui
+    
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
@@ -95,7 +96,7 @@ dependencies {
     debugImplementation libs.androidx.ui.test.manifest
 
     //海豚星空投屏核心库 建议使用后台显示的最新本
-    implementation 'cn.dolphinstar:ctrlCore:5.1.9'
+    implementation 'cn.dolphinstar:ctrlCore:5.2.1'
     //其他
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
