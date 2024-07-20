@@ -141,6 +141,9 @@ public class DeviceActivity extends AppCompatActivity {
                 .subscribe(result -> {
                     keepPush2DeviceDisposableSafe();
                     GlobalData.currentRenderDevice = device;
+                    Intent intent = new Intent();
+                    intent.putExtra("start_query",true);
+                    setResult(GlobalData.SELECT_DEVICE_GO_BACK,intent);
                     finish();
                 }, throwable -> {
                     keepPush2DeviceDisposableSafe();

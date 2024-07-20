@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -53,6 +55,10 @@ public class PlayerActivity extends AppCompatActivity {
     Button sdBtn;
 
     TextView textStatus;
+
+    private ActivityResultLauncher<Intent> activityResultLauncher;
+
+
     private StartUpCfg cfg;
 
     private NetworkChangeReceiver networkChangeReceiver;
@@ -108,7 +114,7 @@ public class PlayerActivity extends AppCompatActivity {
         String stateText = "";
         switch (state) {
             case 0:
-                stateText = "停止中";
+                stateText = "停止";
                 break;
             case 1:
                 stateText = "播放中...";
@@ -147,9 +153,8 @@ public class PlayerActivity extends AppCompatActivity {
                             long executionTime = endTime - startTime;
                             WozLogger.e("投放链接到准备就绪: " + executionTime + " 毫秒");
                         }
-                        String stateText = "";
-                        transformationState(s.state);
-                        Log.e("video", "当前电视状态:" + stateText + "( " + s.state + " )"
+                        String stateText = transformationState(s.state);
+                        Log.e("query主动查询", "当前电视状态:" + stateText + "( " + s.state + " )"
                                 .concat("  总时长(秒)：" + s.duration)
                                 .concat("  当前进度(秒):" + s.progress)
                                 .concat("  当前音量:" + s.volume));
@@ -172,6 +177,8 @@ public class PlayerActivity extends AppCompatActivity {
     * */
     IDpsOpenPushReady dpsOpenPushReady = renderStatus -> {
         // WozLogger.json(renderStatus);
+        String stateText = transformationState(renderStatus.state);
+        Log.w("被动接受电视状态", "当前电视状态:" + stateText + "( " + renderStatus.state + " )");
     };
 
 
@@ -222,8 +229,44 @@ public class PlayerActivity extends AppCompatActivity {
             dpsSdkStartUp();
         });
 
-        //注册状态查询覆盖作用
-        //MYOUController.of(getApplication()) .SetPushReady(dpsOpenPushReady);
+        //注册状态查询被动查询，反复注册可覆盖
+        MYOUController.of(getApplication()) .SetPushReady(dpsOpenPushReady);
+
+        //控制按钮
+        findViewById(R.id.ctl_play).setOnClickListener(view -> {
+            Log.i("控制按键","播放");
+            MYOUController.of(getApplication()).getDpsPlayer().Play();
+        });
+        findViewById(R.id.ctl_pause).setOnClickListener(view -> {
+            Log.i("控制按键","暂停");
+            MYOUController.of(getApplication()).getDpsPlayer().Pause();
+        });
+
+        findViewById(R.id.ctl_stop).setOnClickListener(view -> {
+            Log.i("控制按键","结束");
+            MYOUController.of(getApplication()).getDpsPlayer().Stop();
+        });
+
+        /*
+        注册一个deviceActivity 返回
+        当在device列表点击推送，返回通知启动查询进度
+         */
+        activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result ->{
+                    if(result.getResultCode() == GlobalData.SELECT_DEVICE_GO_BACK){
+                        Intent data =result.getData();
+                        if(data!=null){
+                            boolean isStartQuery = data.getBooleanExtra("start_query",false);
+                            if(isStartQuery){
+                                startTime = System.currentTimeMillis();
+                                endTime = 0;
+                                queryState();
+                            }
+                        }
+                    }
+                }
+        );
     }
 
     private boolean checkDevice() {
@@ -241,7 +284,7 @@ public class PlayerActivity extends AppCompatActivity {
         if (MYOUController.of(getApplication()).IsStartUp()) {
             Intent intent = new Intent(PlayerActivity.this, DeviceActivity.class);
             intent.putExtra("link", info.ResLink);
-            startActivity(intent);
+            activityResultLauncher.launch(intent);
         } else {
             toast("先点击TV按钮启动投屏服务");
         }

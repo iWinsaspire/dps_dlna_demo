@@ -12,6 +12,8 @@ import io.reactivex.disposables.Disposable;
 //全局静态数据
 public class GlobalData {
 
+    public static final int SELECT_DEVICE_GO_BACK = 985;
+
     public  static  void iniData(){
         if(Dramas == null){
             Dramas = new ArrayList<>();
