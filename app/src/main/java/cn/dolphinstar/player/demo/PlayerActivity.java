@@ -176,7 +176,6 @@ public class PlayerActivity extends AppCompatActivity {
     * udp 时效性差
     * */
     IDpsOpenPushReady dpsOpenPushReady = renderStatus -> {
-        // WozLogger.json(renderStatus);
         String stateText = transformationState(renderStatus.state);
         Log.w("被动接受电视状态", "当前电视状态:" + stateText + "( " + renderStatus.state + " )");
     };
