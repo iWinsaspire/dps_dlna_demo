@@ -20,7 +20,7 @@ public class GlobalData {
             for (int i = 0; i < 55; i++) {
                 List<DramaInfo> infos =new ArrayList<>();
                 for (int j = 0; j < 20; j++) {
-                    infos.add(new DramaInfo("http://192.168.3.133:8888/long.mp4", j+""));
+                    infos.add(new DramaInfo("https://dolphinstar.cn/fs/video/auth/succes_mini.mp4", j+""));
                 }
                 Dramas.add(new DramaSet("剧名"+i , infos));
             }

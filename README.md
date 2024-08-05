@@ -5,9 +5,9 @@
 #### (0) 注意 gradle\wrapper\gradle-wrapper.properties
 demo采用本地目录使用 gradle-7.4-all.zip, 根据自己的的情况修改
 ```bash 
-#distributionUrl=https\://services.gradle.org/distributions/gradle-7.4-all.zip
-手动改用上面的
-distributionUrl=file:///D:/Android/gradle-7.4-all.zip
+#distributionUrl=https\://services.gradle.org/distributions/gradle-8.6-all-all.zip
+# 手动改用上面的 或离线使用，下载地址 https://services.gradle.org/distributions/
+distributionUrl=file:///D:/Android/gradle-8.6-all.zip
 ```
 
 ## （1）跟目录的build.gradle添加私有mevan仓库
