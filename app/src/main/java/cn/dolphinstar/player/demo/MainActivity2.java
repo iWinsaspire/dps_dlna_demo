@@ -49,16 +49,19 @@ public class MainActivity2 extends AppCompatActivity {
             createDisposable = null;
         }
     }
+
+    //初始化UI 模拟数据
     public void init(){
-        MYOUController.of(MainActivity2.this);
+        //MYOUController.of(MainActivity2.this);
 
          listView = findViewById(R.id.listView);
         listView.setOnItemClickListener((parent, view, position, id) -> {
             go2player(GlobalData.Dramas.get(position));
         });
 
+        //开个线程
         createDisposable = Observable.fromCallable(() -> {
-                    //初始化数据
+                    //初始化模拟数据数据
                     GlobalData.iniData();
                     return GlobalData.Dramas;
                 }) .doOnDispose(()-> Log.i("init","createDisposable is dispose"))

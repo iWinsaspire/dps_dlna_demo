@@ -3,21 +3,20 @@
 海豚星空投屏 DLNA 投屏示例
 
 #### (0) 注意 gradle\wrapper\gradle-wrapper.properties
-demo采用本地目录使用 gradle-7.4-all.zip, 根据自己的的情况修改
+demo采用本地目录使用 gradle-8.6-all, 根据自己的的情况修改
 ```bash 
-#distributionUrl=https\://services.gradle.org/distributions/gradle-8.6-all-all.zip
-# 手动改用上面的 或离线使用，下载地址 https://services.gradle.org/distributions/
+#distributionUrl=https\://services.gradle.org/distributions/gradle-8.6-bin.zip
+# gradle 下载 https://services.gradle.org/distributions/
 distributionUrl=file:///D:/Android/gradle-8.6-all.zip
 ```
 
-## （1）跟目录的build.gradle添加私有mevan仓库
+## （1）跟目录下的settings.gradle添加私有mevan仓库
 ```groovy
-maven {
-    allowInsecureProtocol true  //比较高的 gradle 要允许 http  ，低版本可不要
-    url 'http://nexus.dolphinstar.cn/repo/openmavenx'
-}
+ maven {
+            allowInsecureProtocol true  //比较高的 gradle 要允许 http
+            url 'http://nexus.dolphinstar.cn/repo/openmavenx'
+        }
 ```
-另外注意！！！更新版本的 gradle，allprojects 移到settings.gradle 配置 [可参考 https://www.jianshu.com/p/11ce712d902d](https://www.jianshu.com/p/11ce712d902d)
 
 
 ## （2）app/build.gradle 文件
@@ -69,11 +68,7 @@ app\src\main\res\xml 中添加文件 network_security_config.xml
 
 ## (5) 申请海豚星空投屏SDK APPID
 
-前往 海豚星空平台 [控制中心](https://client.dolphinstar.cn) 注册并创建应用获取appId   
-在app/src/main/assets  
-添加文件dpsAppInfo  
-添加建值对 APPID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  
-(注意: SDK v 4.0.0 后支持 StartUpCfg.AppId传入参数,将覆盖配置设置,但文件依然要创建，可以没内容)
+前往 海豚星空平台 [控制中心-dps://sdk](https://client.dolphinstar.cn/) 创建应用获取appId，appSecret。
 
 ## (6) SDK 接口
 
@@ -84,17 +79,21 @@ app\src\main\res\xml 中添加文件 network_security_config.xml
 @SuppressLint("CheckResult")
 private void dpsSdkStartUp() {
     cfg = new StartUpCfg();
-    cfg.MediaServerName = "海豚星空DMS-" + (int) (Math.random() * 900 + 100);
     cfg.IsShowLogger = BuildConfig.DEBUG;
-    cfg.AppSecret = "xxxxxxx"; //这里填入你的秘钥
+    cfg.MediaServerName = "海豚星空DMS-" + (int) (Math.random() * 900 + 100);
+    cfg.AppSecret = ""; //这里填入你的秘钥
+    cfg.AppId = ""; //这里填入你的秘钥
+    /*
+    使用android id 作为设备标识,不方便使用android id 可以考虑使用随机数 AUTH_BY_RANDOM_ID。
+    参考阅读 https://dolphinstar.cn/doc/#other/deviceid
+    手机发送端仅推荐使用 AUTH_BY_ANDROID_ID 或 AUTH_BY_RANDOM_ID。
+    */
+    cfg.AuthType = StartUpAuthType.AUTH_BY_ANDROID_ID;
 
     //demo 特殊配置信息 ，非必要。按自己想要的方式给 AppId AppSecret赋值就好
-    if (!BuildConfig.dpsAppId.isEmpty()) {
-        //虽然这里可以配置AppId，但app/src/main/assets/dpsAppInfo文件还是必须存在，可以不配置真的值。
+    if (!BuildConfig.dpsAppId.isEmpty() && !BuildConfig.dpsAppSecret.isEmpty() ) {
         cfg.AppId = BuildConfig.dpsAppId;
-    }
-    if (!BuildConfig.dpsAppSecret.isEmpty()) {
-    cfg.AppSecret = BuildConfig.dpsAppSecret;
+        cfg.AppSecret = BuildConfig.dpsAppSecret;
     } 
     
     MYOUController.of(MainActivity.this)
@@ -247,12 +246,13 @@ public class VideoActivity extends DemoActivityBase {
 }
 ```
 
-## 设备在海豚星空平台唯一标识
-sdk 版本小于 5.1.1 使用MAC地址作为标识，MAC作为唯一标识已过时。5.1.1开始使用android id作为标识，需要在配置文件在app/src/main/assets/dpsAppInfo添加键值对指定为AndroidID
-```bash
-#注意 AUTHMACTYPE是要与appId对应的配置一致，有问题导致无法启动sdk及时与海豚星空投屏技术人员沟通
-AUTHMACTYPE=AndroidID
-```
+## 注意：
+使用前，先改动 cn.dolphinstar.player.demo.GlobalData.videoLink 为自己的视频链接
 
----
-## [开发者文档](https://dolphinstar.cn/doc/#android/dlna)
+
+### Demo下载
+[github下载: https://github.com/iWinsaspire/dps_dlna_demo](https://github.com/iWinsaspire/dps_dlna_demo)
+
+[dps_dlna_demo.zip 下载](https://dolphinstar.cn/fs/demo/dps_dlna_demo.zip)
+
+[百度网盘下载 dps_dlna_demo.zip](https://pan.baidu.com/s/1QAIQtLu394F-xc6BYTty8g?pwd=idps)

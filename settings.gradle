@@ -4,9 +4,11 @@ pluginManagement {
             allowInsecureProtocol true  //比较高的 gradle 要允许 http
             url 'http://nexus.dolphinstar.cn/repo/openmavenx'
         }
+        //其他仓库，可选
         maven { url 'https://maven.aliyun.com/repository/central'}
         maven { url 'https://maven.aliyun.com/repository/public'}
         maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://mirrors.tuna.tsinghua.edu.cn/repository/maven-central/' }
 
         google {
             content {
@@ -27,14 +29,15 @@ dependencyResolutionManagement {
             allowInsecureProtocol true  //比较高的 gradle 要允许 http
             url 'http://nexus.dolphinstar.cn/repo/openmavenx'
         }
+        //其他仓库，可选
         maven { url 'https://maven.aliyun.com/repository/central'}
         maven { url 'https://maven.aliyun.com/repository/public'}
         maven { url 'https://maven.aliyun.com/repository/google' }
-
+        maven { url 'https://mirrors.tuna.tsinghua.edu.cn/repository/maven-central/' }
         google()
         mavenCentral()
     }
 }
 
-rootProject.name = "dps_dlna_test"
+rootProject.name = "dps_dlna_demo"
 include ':app'

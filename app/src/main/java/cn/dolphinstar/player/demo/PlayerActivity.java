@@ -30,6 +30,7 @@ import java.util.ArrayList;
 
 import cn.dolphinstar.lib.IDps.IDpsOpenPushReady;
 import cn.dolphinstar.lib.POCO.ReturnMsg;
+import cn.dolphinstar.lib.POCO.StartUpAuthType;
 import cn.dolphinstar.lib.POCO.StartUpCfg;
 import cn.dolphinstar.lib.RxEventBus;
 import cn.dolphinstar.lib.ctrlCore.MYOUController;
@@ -71,6 +72,8 @@ public class PlayerActivity extends AppCompatActivity {
             push2DeviceDisposable = null;
         }
     }
+
+    //推送链接到接收端设备上播放
     private void push2Device(String link, RenderDevice device) {
         push2DeviceDisposable = Observable.fromCallable(() -> {
                     ReturnMsg msg = MYOUController.of(getApplication()).getDpsPlayer()
@@ -102,6 +105,7 @@ public class PlayerActivity extends AppCompatActivity {
     // 记录结束时间
     long endTime =0;
 
+    //事件格式化显示
     public static String formatSeconds(int seconds) {
         int hours = seconds / 3600;
         int minutes = (seconds % 3600) / 60;
@@ -110,6 +114,7 @@ public class PlayerActivity extends AppCompatActivity {
         return String.format("%02d:%02d:%02d", hours, minutes, secs);
     }
 
+    //状态转化
     public  String transformationState(int state){
         String stateText = "";
         switch (state) {
@@ -192,13 +197,17 @@ public class PlayerActivity extends AppCompatActivity {
             return insets;
         });
 
+        //获取播放剧集参数
         Intent intent = getIntent();
         String did = intent.getStringExtra("id");
         dramaSet = GlobalData.Dramas.stream().filter((i -> i.Id.equals(did))).findFirst().get();
         currentDramaInfo = dramaSet.Data.stream().findFirst().get();
+
+        //监听网络变换
         networkChangeReceiver = new NetworkChangeReceiver();
         isNetworkChangeFirst = true;
 
+        //显示集数
         listView = findViewById(R.id.list_info_View);
         // 创建 ArrayAdapter
         DramaAdapter<DramaSet> adapter = new DramaAdapter(this, R.layout.list_item, dramaSet.Data);
@@ -214,17 +223,24 @@ public class PlayerActivity extends AppCompatActivity {
             }
 
         });
+
+        //更新播放器状态
         textStatus = findViewById(R.id.text_status);
         RxEventBus.of().on(pUpdateUIState.class,(s)->{
             textStatus.setText(s.msg);
         });
+
+        //选择设备按钮
         sdBtn = findViewById(R.id.btn_sd);
         sdBtn.setOnClickListener(view -> {
+            //去设备列表搜索和选择投放设备
             go2device(currentDramaInfo);
         });
 
+        //tv按钮
         tvBtn = findViewById(R.id.btn_tv);
         tvBtn.setOnClickListener(view -> {
+            //启动sdk
             dpsSdkStartUp();
         });
 
@@ -268,10 +284,13 @@ public class PlayerActivity extends AppCompatActivity {
         );
     }
 
+    //检查缓存设备信息是否还有效。
     private boolean checkDevice() {
-        if (GlobalData.currentRenderDevice == null)
+        if (GlobalData.currentRenderDevice == null) {
             return false;
+        }
 
+        //获取当前在线接收端设备
         ArrayList<RenderDevice> list = MYOUController.of(getApplication())
                 .getRenderDevice().GetAllOnlineDevices();
 
@@ -279,6 +298,8 @@ public class PlayerActivity extends AppCompatActivity {
         return length > 0;
     }
 
+
+    //前往设备列表页面
     private void go2device(DramaInfo info) {
         if (MYOUController.of(getApplication()).IsStartUp()) {
             Intent intent = new Intent(PlayerActivity.this, DeviceActivity.class);
@@ -293,26 +314,27 @@ public class PlayerActivity extends AppCompatActivity {
     @SuppressLint("CheckResult")
     private void dpsSdkStartUp() {
 
-        //如果是wifi 启动
+        //如果是 wifi 启动，投屏一般在局域网内使用，建议确定是wifi在启动
         if (NetworkUtils.isWifiConnected(getApplication())) {
             cfg = new StartUpCfg();
             cfg.IsShowLogger = BuildConfig.DEBUG;
             cfg.MediaServerName = "海豚星空DMS-" + (int) (Math.random() * 900 + 100);
             cfg.AppSecret = ""; //这里填入你的秘钥
             cfg.AppId = ""; //这里填入你的秘钥
-            cfg.IsEnableLocaldms = false;
+             /*
+            使用android id 作为设备标识,不方便使用android id 可以考虑使用随机数 AUTH_BY_RANDOM_ID。
+            参考阅读 https://dolphinstar.cn/doc/#other/deviceid
+            手机发送端仅推荐使用 AUTH_BY_ANDROID_ID 或 AUTH_BY_RANDOM_ID。
+            */
+            cfg.AuthType = StartUpAuthType.AUTH_BY_ANDROID_ID;
 
             //demo 特殊配置信息 ，非必要。按自己想要的方式给 AppId AppSecret赋值就好
             if (!BuildConfig.dpsAppId.isEmpty() && !BuildConfig.dpsAppSecret.isEmpty() ) {
-                //虽然这里可以配置AppId，
-                //但app/src/main/assets/dpsAppInfo文件还是必须存在，可以不配置真的值。
                 cfg.AppId = BuildConfig.dpsAppId;
-
                 cfg.AppSecret = BuildConfig.dpsAppSecret;
             } 
 
             if (!MYOUController.of(getApplication()).IsStartUp()) {
-
                 MYOUController.of(getApplication())
                         .StartService(cfg)    // 启动服务
                         .observeOn(AndroidSchedulers.mainThread()) //操作UI要切主线程

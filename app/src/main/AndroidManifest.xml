@@ -4,6 +4,10 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <!--
+ 配置 android:networkSecurityConfig="@xml/network_security_config"
+ 允许sdk使用http请求
+ -->
 
     <application
         android:allowBackup="true"

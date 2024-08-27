@@ -14,13 +14,16 @@ public class GlobalData {
 
     public static final int SELECT_DEVICE_GO_BACK = 985;
 
+    //TODO 模拟投屏链接，建议更新成自己的长时视频链接。
+    public  static final String videoLink = "https://dolphinstar.cn/fs/video/auth/succes_mini.mp4";
+
     public  static  void iniData(){
         if(Dramas == null){
             Dramas = new ArrayList<>();
             for (int i = 0; i < 55; i++) {
                 List<DramaInfo> infos =new ArrayList<>();
                 for (int j = 0; j < 20; j++) {
-                    infos.add(new DramaInfo("https://dolphinstar.cn/fs/video/auth/succes_mini.mp4", j+""));
+                    infos.add(new DramaInfo(videoLink, j+""));
                 }
                 Dramas.add(new DramaSet("剧名"+i , infos));
             }
