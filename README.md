@@ -247,8 +247,14 @@ public class VideoActivity extends DemoActivityBase {
 ```
 
 ## 注意：
+
 使用前，先改动 cn.dolphinstar.player.demo.GlobalData.videoLink 为自己的视频链接
 
+### 页面文件说明
+    MainActivity2 首页-剧集主页 点击剧集跳转 PlayerActivity
+    PlayerActivity 播放页 点击TV按钮启动投屏服务并 跳转 DeviceActivity，
+                   启动sdk情况下点击 模拟集数按钮跳转 DeviceActivity
+    DeviceActivity 设备列表页 点击设备进行投屏
 
 ### Demo下载
 [github下载: https://github.com/iWinsaspire/dps_dlna_demo](https://github.com/iWinsaspire/dps_dlna_demo)
